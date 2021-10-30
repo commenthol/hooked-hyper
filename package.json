@@ -1,0 +1,26 @@
+{
+  "name": "hooked-hyper",
+  "version": "1.0.0-0",
+  "description": "hyperscript on hooks",
+  "keywords": ["hooks", "hyperscript", "react clone"],
+  "homepage": "https://github.com/commenthol/hooked-hyper#readme",
+  "bugs": {
+    "url": "https://github.com/commenthol/hooked-hyper/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/commenthol/hooked-hyper.git"
+  },
+  "license": "Unlicense",
+  "author": "commenthol@gmail.com",
+  "main": "h.js",
+  "module": "h.js",
+  "scripts": {
+    "dev": "browser-sync start --server --cors --watch --no-ui --no-notify --host 127.0.0.0 --serveStatic ./",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "browser-sync": "*"
+  }
+}
