@@ -1,8 +1,12 @@
 {
   "name": "hooked-hyper",
-  "version": "1.0.0-0",
+  "version": "1.0.0",
   "description": "hyperscript on hooks",
-  "keywords": ["hooks", "hyperscript", "react clone"],
+  "keywords": [
+    "hooks",
+    "hyperscript",
+    "react clone"
+  ],
   "homepage": "https://github.com/commenthol/hooked-hyper#readme",
   "bugs": {
     "url": "https://github.com/commenthol/hooked-hyper/issues"
