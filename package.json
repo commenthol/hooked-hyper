@@ -20,11 +20,14 @@
   "main": "h.js",
   "module": "h.js",
   "scripts": {
+    "lint": "standard --fix --env browser *.js",
+    "build": "./build.sh",
     "dev": "browser-sync start --server --cors --watch --no-ui --no-notify --host 127.0.0.0 --serveStatic ./",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {},
   "devDependencies": {
-    "browser-sync": "*"
+    "browser-sync": "*",
+    "standard": "*"
   }
 }
