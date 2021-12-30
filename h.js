@@ -56,7 +56,7 @@ export const Fragment = (props) => props[CHILDREN]
 /**
  * @private
  */
-const mapChild = (c) => 
+const mapChild = (c) =>
   (typeof c === 'function')
     ? c()
     : c

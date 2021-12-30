@@ -2,7 +2,7 @@ import {
   render, h, Fragment,
   useState, useRef, useEffect, useMemo,
   createContext, useContext
-} from './h.js'
+} from './h.min.js'
 
 const style = `
 html {
@@ -17,12 +17,22 @@ h3 {
   padding-top: 0.5em;
   border-top: 1px solid lightgrey;
 }
+button, input {
+  font-family: sans-serif;
+  font-size: 1em;
+  padding: 0.25em;
+}
+button ~ button {
+  margin-right: 0.5em;
+}
 .red {
   color: red;
 }
 .counter {
   display: inline-block;
-  border: 1px solid green;
+  font-weight: bold;
+  color: green;
+  border: 2px solid green;
   border-radius: 0.3em;
   padding: 0.8em;
   min-width: 1.5em;
@@ -75,7 +85,7 @@ class XCustom extends HookedElement {
 
   render () {
     render(this._shadowRoot, {}, [
-      h('p', { style: { padding: '0.5em', backgroundColor: '#ffffe0' } },
+      h('div', { style: { padding: '0.5em', backgroundColor: 'yellow', color: 'red' } },
         `<x-custom options='${JSON.stringify(this._options)}' />`
       )
     ])
@@ -83,15 +93,28 @@ class XCustom extends HookedElement {
 }
 customElements.define('x-custom', XCustom)
 
+function Title () {
+  useEffect(() => {
+    document.title = 'hooked-hyper'
+  }, [])
+  return null
+}
+
 // ---- samples ----
 function HyperScriptSample () {
   return h(Fragment, {}, [
     h('h1', { className: 'red' }, [
       'hooked hyperscript'
     ]),
-    h('p', {}, '<script>/* escaping works */</script>'),
+    h('p', {},
+      h('strong', {}, 'Render some elements...')
+    ),
     h('p', { style: { color: 'blue', textTransform: 'uppercase' } }, 'Lorem ipsum.'),
-    h('x-custom', { options: { foo: 'bar' } }),
+    h('p', {}, '<script>/* escaping works */</script>'),
+    h('p', { style: { border: '1px solid lightgrey', color: 'grey' } }, [
+      'Render web-component:',
+      h('x-custom', { options: { foo: 'bar' } })
+    ]),
     h('button', { onClick: () => alert('clicked'), style: { marginBottom: '1em' } }, 'Show alert')
   ])
 }
@@ -101,7 +124,7 @@ function HyperScriptSample () {
  * @note the component needs to be wrapped withHook
  */
 function Counter (props) {
-  const style = { padding: '1em' }
+  const style = { padding: '0.8em' }
   const { initialCount, ...other } = props
   const [count, setCount] = useState(initialCount || 0)
 
@@ -150,8 +173,8 @@ function UseEffectSample () {
       }, [count])
 
       return [
-        h('button', { onClick: () => setCount(count + 1) }, 'count up'),
-        h('button', { onClick: () => setCount(0) }, 'reset')
+        h('button', { onClick: () => setCount(count + 1) }, 'Count up'),
+        h('button', { onClick: () => setCount(0) }, 'Reset')
       ]
     }),
     h('p'),
@@ -170,22 +193,22 @@ function UseMemoSample () {
       }, [count % 5 === 0])
 
       return [
-        h('div', {}, 'count: ' + count),
-        h('div', { style: { paddingBottom: '1em' } }, 'memo: ' + memo),
-        h('button', { onClick: () => setCount(count + 1) }, 'count up'),
-        h('button', { onClick: () => setCount(0) }, 'reset')
+        h('div', {}, 'Count: ' + count),
+        h('div', { style: { paddingBottom: '1em' } }, 'Memo: ' + memo),
+        h('button', { onClick: () => setCount(count + 1) }, 'Count up'),
+        h('button', { onClick: () => setCount(0) }, 'Reset')
       ]
     })
   ])
 }
 
 function UseContextSample () {
-  const ThemeContext = createContext({ style: { color: 'blue', backgroundColor: 'cyan' } })
+  const ThemeContext = createContext()
 
   const ThemeToggleProvider = ({ children }) => {
     const theme = [
-      { color: 'blue', backgroundColor: 'cyan' },
-      { color: 'cyan', backgroundColor: 'blue' }
+      { color: 'blue', backgroundColor: 'cyan', padding: '0.5em' },
+      { color: 'cyan', backgroundColor: 'blue', padding: '0.5em' }
     ]
     const [themeIndex, _setTheme] = useState(0)
 
@@ -200,12 +223,12 @@ function UseContextSample () {
 
   return h(Fragment, {}, [
     h('h3', {}, 'useContext sample'),
-    h(ThemeContext.Provider, { value: { style: { color: 'red', backgroundColor: 'yellow' } } }, [
+    h(ThemeContext.Provider, { value: { style: { color: 'red', backgroundColor: 'yellow', padding: '1em' } } }, [
       h('section', {}, [
         h('div', {}, [
           h(ThemeContext.Consumer, {}, [
             h((props) => {
-              return h('p', props, 'foobar')
+              return h('p', props, 'Overwrite theme. Won\'t toggle.')
             })
           ])
         ]),
@@ -215,15 +238,19 @@ function UseContextSample () {
             h('div', { style: { border: '3px solid magenta' } }, [
               h(ThemeContext.Consumer, {}, [
                 h(props => {
-                  return h('p', props, 'consumed')
+                  return h('div', props, [
+                    'With ThemeContext.Consumer,',
+                    h('br'),
+                    'wrapped in other element.'
+                  ])
                 })
               ])
             ]),
             h(() => {
               const { setTheme, ...props } = useContext(ThemeContext)
               return [
-                h('p', props, 'colors'),
-                h('button', { onClick: setTheme }, 'toggle theme')
+                h('p', props, 'With useContext'),
+                h('button', { onClick: setTheme }, 'Toggle theme')
               ]
             })
           ])
@@ -233,12 +260,33 @@ function UseContextSample () {
   ])
 }
 
+function Github () {
+  const border = '1px solid lightgrey'
+
+  return h('section', { style: { borderTop: border, borderBottom: border, margin: '1em 0', padding: '0 0 1em' } }, [
+    h('p', {}, [
+      'Check the code on ',
+      h('a', { href: 'https://github.com/commenthol/hooked-hyper', target: '_blank' }, 'github'),
+      '.'
+    ]),
+    h('iframe', {
+      src: 'https://ghbtns.com/github-btn.html?user=commenthol&repo=hooked-hyper&type=star&count=true',
+      frameBorder: '0',
+      scrolling: '0',
+      width: '170px',
+      height: '20px'
+    })
+  ])
+}
+
 render(document.body, {}, [
   h('style', {}, style),
-  HyperScriptSample(),
-  UseStateSample(),
-  UseRefSample(),
-  UseEffectSample(),
-  UseMemoSample(),
-  UseContextSample()
+  h(Title),
+  h(HyperScriptSample),
+  h(UseStateSample),
+  h(UseRefSample),
+  h(UseEffectSample),
+  h(UseMemoSample),
+  h(UseContextSample),
+  h(Github)
 ])
